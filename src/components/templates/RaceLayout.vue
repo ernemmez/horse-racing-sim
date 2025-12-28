@@ -8,6 +8,7 @@
         :isRaceActive="isRaceActive"
         @generate="handleGenerate"
         @start="handleStart"
+        @pause="handlePause"
       />
     </header>
     
@@ -68,16 +69,18 @@ defineProps<{
 const emit = defineEmits<{
   generate: []
   start: []
+  pause: []
 }>()
 
 const handleGenerate = () => emit('generate')
 const handleStart = () => emit('start')
+const handlePause = () => emit('pause')
 </script>
 
 <style scoped>
 .race-layout {
   min-height: 100vh;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-sm);
   background: var(--bg-gradient);
 }
 
@@ -101,14 +104,15 @@ const handleStart = () => emit('start')
   display: grid;
   grid-template-columns: 1fr 2fr 1fr 1fr;
   grid-gap: var(--spacing-lg);
-  min-height: calc(100vh - 120px);
+  height: calc(100vh - 140px);
 }
 
 .grid-horses,
 .grid-track,
 .grid-program,
 .grid-results {
-  min-height: 500px;
+  min-height: 400px;
+  max-height: 100%;
 }
 
 /* Responsive */

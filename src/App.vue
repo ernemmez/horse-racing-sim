@@ -12,6 +12,7 @@
     :canStart="canStart"
     @generate="handleGenerate"
     @start="handleStart"
+    @pause="handlePause"
   />
 </template>
 
@@ -48,5 +49,9 @@ const handleStart = () => {
   if (canStart.value) {
     store.dispatch('race/startRace')
   }
+}
+
+const handlePause = () => {
+  store.dispatch('race/stopRace')
 }
 </script>

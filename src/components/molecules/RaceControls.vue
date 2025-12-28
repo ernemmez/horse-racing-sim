@@ -8,11 +8,19 @@
       Generate Program
     </BaseButton>
     <BaseButton 
+      v-if="!isRaceActive"
       variant="secondary"
       :disabled="!canStart"
       @click="$emit('start')"
     >
-      {{ isRaceActive ? 'Racing...' : 'Start Race' }}
+      ▶️ Start Race
+    </BaseButton>
+    <BaseButton 
+      v-else
+      variant="danger"
+      @click="$emit('pause')"
+    >
+      ⏸️ Pause Race
     </BaseButton>
   </div>
 </template>
@@ -29,6 +37,7 @@ defineProps<{
 defineEmits<{
   generate: []
   start: []
+  pause: []
 }>()
 </script>
 

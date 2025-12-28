@@ -1,8 +1,7 @@
-import { Module } from "vuex";
-import type { HorsePosition, RaceState, RootState } from "../types";
+import type { HorsePosition, RaceState } from "../types";
 import { calculateHorseSpeed } from "../../utils/algorithms";
 
-const raceModule: Module<RaceState, RootState> = {
+const raceModule = {
   namespaced: true,
 
   state: (): RaceState => ({
@@ -42,15 +41,21 @@ const raceModule: Module<RaceState, RootState> = {
         return;
       }
 
-      commit("RESET_POSITIONS");
-      commit("SET_RACE_START_TIME", Date.now());
+      // Resume mode: if positions already exist, don't reset
+      const hasExistingPositions = Object.keys(state.horsePositions).length > 0;
 
-      currentRound.horses.forEach((horse) => {
-        commit("UPDATE_HORSE_POSITION", {
-          horseId: horse.id,
-          position: { horseId: horse.id, position: 0, speed: 0 },
+      if (!hasExistingPositions) {
+        // Fresh start: initialize positions
+        commit("RESET_POSITIONS");
+        commit("SET_RACE_START_TIME", Date.now());
+
+        currentRound.horses.forEach((horse) => {
+          commit("UPDATE_HORSE_POSITION", {
+            horseId: horse.id,
+            position: { horseId: horse.id, position: 0, speed: 0 },
+          });
         });
-      });
+      }
 
       commit("SET_RACE_ACTIVE", true);
 

@@ -12,13 +12,14 @@ defineProps<{
 
 <style scoped>
 .horse-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 18px;
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 </style>

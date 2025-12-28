@@ -3,7 +3,7 @@
     <div class="track-header">
       <h3>Race Track</h3>
       <div v-if="currentRound" class="round-badge">
-        Round {{ currentRound.roundNo }} - {{ currentRound.distance }}m
+        Lap {{ currentRound.roundNo }} - {{ currentRound.distance }}m
       </div>
     </div>
     
@@ -29,19 +29,19 @@
               
               <!-- Horse Silhouette -->
               <div 
-                class="horse-silhouette"
+                class="horse-runner"
                 :style="{ 
                   left: `${horsePositions[horse.id]?.position || 0}%`,
-                  color: horse.color
                 }"
               >
-                🏇
+                <div class="horse-emoji" :style="{ color: horse.color }">🏇</div>
+                <div class="horse-name-label">{{ horse.name }}</div>
               </div>
             </div>
             
             <!-- Finish Line -->
             <div class="finish-marker">
-              <div class="finish-line">FINISH</div>
+              <div class="finish-flag">🏁</div>
             </div>
           </div>
         </div>
@@ -188,71 +188,80 @@ defineProps<{
 
 .track-line {
   position: absolute;
-  left: 0;
-  right: 0;
   top: 50%;
-  transform: translateY(-50%);
-  height: 1px;
+  left: 0;
+  right: 48px;
+  height: 2px;
   background: repeating-linear-gradient(
     to right,
-    #9E9E9E 0px,
-    #9E9E9E 8px,
-    transparent 8px,
-    transparent 16px
+    #ddd 0px,
+    #ddd 10px,
+    transparent 10px,
+    transparent 20px
   );
+  transform: translateY(-50%);
 }
 
-.horse-silhouette {
+.horse-runner {
   position: absolute;
-  left: 0;
-  font-size: 24px;
+  top: 50%;
+  transform: translate(-50%, -50%);
   transition: left 0.05s linear;
-  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
   z-index: 2;
-  transform: scaleX(-1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.horse-emoji {
+  font-size: 24px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  animation: gallop 0.4s ease-in-out infinite;
+  display: inline-block;
+}
+
+.horse-name-label {
+  font-size: 9px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  /* Ensure text doesn't flip if parent flips */
+  transform: scaleX(1); 
 }
 
 .finish-marker {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 48px;
+  z-index: 1;
 }
 
-.finish-line {
-  background: linear-gradient(135deg, #EF5350 0%, #D32F2F 100%);
-  color: white;
-  padding: 4px var(--spacing-sm);
-  font-weight: var(--font-weight-bold);
-  font-size: 11px;
-  border-radius: var(--radius-sm);
-  white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(211, 47, 47, 0.4);
-  position: relative;
+.finish-flag {
+  font-size: 32px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  animation: wave 2s ease-in-out infinite;
 }
 
-.finish-line::before {
-  content: '';
-  position: absolute;
-  left: -4px;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: repeating-linear-gradient(
-    to bottom,
-    white 0px,
-    white 6px,
-    #D32F2F 6px,
-    #D32F2F 12px
-  );
+@keyframes wave {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
 }
 
 /* Racing animation */
 @keyframes gallop {
-  0%, 100% { transform: scaleX(-1) translateY(0); }
-  50% { transform: scaleX(-1) translateY(-2px); }
+  0%, 100% { transform: scaleX(-1) translateY(0) rotate(-5deg); }
+  50% { transform: scaleX(-1) translateY(-3px) rotate(0deg); }
 }
 
-.horse-silhouette {
-  animation: gallop 0.3s ease-in-out infinite;
-}
+/* Removed unused .horse-silhouette */
 </style>

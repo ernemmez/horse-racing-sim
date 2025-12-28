@@ -3,7 +3,7 @@
     <div class="list-header">
       <h3>Horses ({{ horses.length }})</h3>
       <StatusBadge :status="horses.length === 20 ? 'active' : 'waiting'">
-        {{ horses.length === 20 ? 'Ready' : 'Generating...' }}
+        {{ horses.length === 20 ? 'Ready' : 'Waiting...' }}
       </StatusBadge>
     </div>
     <div class="list-content">

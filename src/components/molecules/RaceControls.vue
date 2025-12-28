@@ -2,7 +2,7 @@
   <div class="race-controls">
     <BaseButton 
       variant="primary" 
-      :disabled="hasProgram"
+      :disabled="isRaceActive || (hasProgram && !isProgramFinished)"
       @click="$emit('generate')"
     >
       Generate Program
@@ -10,7 +10,7 @@
     <BaseButton 
       v-if="!isRaceActive"
       variant="secondary"
-      :disabled="!canStart"
+      :disabled="!canStart || isProgramFinished"
       @click="$emit('start')"
     >
       ▶️ Start Race
@@ -32,6 +32,7 @@ defineProps<{
   hasProgram: boolean
   canStart: boolean
   isRaceActive: boolean
+  isProgramFinished: boolean
 }>()
 
 defineEmits<{

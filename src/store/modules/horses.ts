@@ -2,7 +2,6 @@ import type { Horse, HorsesState } from "../types";
 import {
   getUniqueColors,
   getUniqueNames,
-  generateCondition,
   generateId,
 } from "../../utils/algorithms";
 
@@ -21,6 +20,15 @@ const horsesModule = {
     SET_COLORS(state, colors: string[]) {
       state.availableColors = colors;
     },
+    UPDATE_HORSE_CONDITION(
+      state,
+      payload: { horseId: string; condition: number }
+    ) {
+      const horse = state.horses.find((h) => h.id === payload.horseId);
+      if (horse) {
+        horse.condition = payload.condition;
+      }
+    },
   },
 
   actions: {
@@ -34,7 +42,9 @@ const horsesModule = {
           id: generateId(),
           name: names[i],
           color: colors[i],
-          condition: generateCondition(),
+          condition: 100,
+          stamina: Math.floor(Math.random() * 41) + 60,
+          maxCondition: 100,
         });
       }
 

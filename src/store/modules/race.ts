@@ -1,5 +1,9 @@
 import type { HorsePosition, RaceState } from "../types";
-import { calculateHorseSpeed } from "../../utils/algorithms";
+import {
+  calculateHorseSpeed,
+  calculateConditionLoss,
+  applyConditionLoss,
+} from "../../utils/algorithms";
 
 const raceModule = {
   namespaced: true,
@@ -70,7 +74,7 @@ const raceModule = {
 
           allFinished = false;
 
-          const speed = calculateHorseSpeed(horse.condition);
+          const speed = calculateHorseSpeed(horse.condition, horse.stamina);
           const newPosition = Math.min(
             currentPos.position + (speed / currentRound.distance) * 2,
             100
@@ -106,30 +110,59 @@ const raceModule = {
         rootState.program.rounds[rootState.program.currentRoundIndex || 0];
       if (!currentRound) return;
 
-      const finishTime = state.raceStartTime
-        ? Date.now() - state.raceStartTime
-        : 0;
+      const rankings: Array<{
+        horseId: string;
+        horseName: string;
+        horseColor: string;
+        position: number;
+        finishTime: number;
+      }> = [];
 
-      const rankings = (Object.values(state.horsePositions) as HorsePosition[])
-        .map((pos) => {
-          const horse = currentRound.horses.find((h) => h.id === pos.horseId);
-          return {
-            horseId: pos.horseId,
-            horseName: horse?.name || "",
-            horseColor: horse?.color || "",
+      currentRound.horses.forEach((horse) => {
+        const pos = state.horsePositions[horse.id];
+        if (pos) {
+          rankings.push({
+            horseId: horse.id,
+            horseName: horse.name,
+            horseColor: horse.color,
             position: 0,
-            finishTime,
-          };
-        })
-        .sort((a, b) => {
-          const posA = state.horsePositions[a.horseId].position;
-          const posB = state.horsePositions[b.horseId].position;
-          return posB - posA;
-        })
-        .map((r, index) => ({ ...r, position: index + 1 }));
+            finishTime: Date.now() - (state.raceStartTime || Date.now()),
+          });
+        }
+      });
+
+      rankings.sort((a, b) => {
+        const posA = state.horsePositions[a.horseId]?.position || 0;
+        const posB = state.horsePositions[b.horseId]?.position || 0;
+        return posB - posA;
+      });
+
+      rankings.forEach((ranking, index) => {
+        ranking.position = index + 1;
+      });
+
+      // Apply condition depletion based on distance and stamina
+      currentRound.horses.forEach((horse) => {
+        const conditionLoss = calculateConditionLoss(
+          currentRound.distance,
+          horse.stamina,
+          horse.condition
+        );
+        const newCondition = applyConditionLoss(horse.condition, conditionLoss);
+
+        // Update horse condition in store
+        commit(
+          "horses/UPDATE_HORSE_CONDITION",
+          {
+            horseId: horse.id,
+            condition: newCondition,
+          },
+          { root: true }
+        );
+      });
 
       dispatch(
-        "results/saveRoundResult",
+        "results/addRoundResult",
         {
           roundNo: currentRound.roundNo,
           distance: currentRound.distance,

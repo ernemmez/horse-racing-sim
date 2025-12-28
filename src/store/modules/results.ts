@@ -21,6 +21,10 @@ const resultsModule = {
       commit("ADD_ROUND_RESULT", result);
     },
 
+    addRoundResult({ commit }, result: RoundResult) {
+      commit("ADD_ROUND_RESULT", result);
+    },
+
     resetResults({ commit }) {
       commit("RESET_RESULTS");
     },

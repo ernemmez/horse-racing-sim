@@ -22,20 +22,22 @@ const programModule = {
     generateProgram({ commit, rootState }) {
       const allHorses = rootState.horses.horses;
 
-      if (allHorses.length !== 20) {
-        console.error("Need exactly 20 horses");
+      if (allHorses.length < 20) {
+        console.error("Need at least 20 horses");
         return;
       }
 
       const rounds: Round[] = [];
 
       for (let i = 0; i < 6; i++) {
-        const selectedHorses = shuffleArray<Horse>(allHorses).slice(0, 10);
+        // For each round, select 10 random horses from the available 20
+        // This ensures fresh combinations for every lap
+        const lapHorses = shuffleArray<Horse>(allHorses).slice(0, 10);
 
         rounds.push({
           roundNo: i + 1,
           distance: ROUND_DISTANCES[i],
-          horses: selectedHorses,
+          horses: lapHorses,
         });
       }
 

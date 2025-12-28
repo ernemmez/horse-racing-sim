@@ -10,6 +10,7 @@
     :completedRoundsCount="completedRoundsCount"
     :hasProgram="hasProgram"
     :canStart="canStart"
+    :isProgramFinished="isProgramFinished"
     @generate="handleGenerate"
     @start="handleStart"
     @pause="handlePause"
@@ -31,6 +32,7 @@ const isRaceActive = computed(() => store.getters['race/isRaceActive'])
 const horsePositions = computed(() => store.getters['race/horsePositions'])
 const results = computed(() => store.getters['results/allResults'])
 const completedRoundsCount = computed(() => store.getters['results/completedCount'])
+const isProgramFinished = computed(() => store.getters['program/isFinished'])
 
 const hasProgram = computed(() => rounds.value.length > 0)
 const canStart = computed(() => 

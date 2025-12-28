@@ -3,7 +3,7 @@
     <div class="panel-header">
       <h3>Results</h3>
       <StatusBadge v-if="results.length > 0" status="finished">
-        {{ results.length }} Rounds
+        {{ results.length }} Laps
       </StatusBadge>
     </div>
     <div class="panel-content">

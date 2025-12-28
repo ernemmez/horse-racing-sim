@@ -1,17 +1,17 @@
 <template>
   <div class="round-result-card card">
     <div class="round-header">
-      <h4>Round {{ result.roundNo }}</h4>
+      <h4>Lap {{ result.roundNo }}</h4>
       <span class="distance">{{ result.distance }}m</span>
     </div>
     <div class="rankings">
       <div 
-        v-for="ranking in result.rankings.slice(0, 3)" 
+        v-for="ranking in result.rankings" 
         :key="ranking.horseId"
         class="ranking-item"
         :class="`position-${ranking.position}`"
       >
-        <div class="rank-badge">{{ formatPosition(ranking.position) }}</div>
+        <div class="rank-badge">{{ ranking.position }}</div>
         <div class="horse-color" :style="{ backgroundColor: ranking.horseColor }" />
         <div class="horse-name">{{ ranking.horseName }}</div>
         <div class="finish-time">{{ formatTime(ranking.finishTime) }}</div>
@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import type { RoundResult } from '../../store/types'
-import { formatPosition, formatTime } from '../../utils/algorithms'
+import { formatTime } from '../../utils/algorithms'
 
 defineProps<{
   result: RoundResult
@@ -31,27 +31,27 @@ defineProps<{
 
 <style scoped>
 .round-result-card {
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
 }
 
 .round-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-md);
-  padding-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-xs);
   border-bottom: 1px solid var(--color-border);
 }
 
 .round-header h4 {
   margin: 0;
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-base);
   color: var(--color-text);
 }
 
 .distance {
-  font-size: var(--font-size-sm);
+  font-size: 11px;
   color: var(--color-text-muted);
   font-weight: var(--font-weight-medium);
 }
@@ -59,14 +59,14 @@ defineProps<{
 .rankings {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 2px;
 }
 
 .ranking-item {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm);
+  gap: var(--spacing-xs);
+  padding: 4px var(--spacing-xs);
   border-radius: var(--radius-sm);
   transition: background var(--transition-fast);
 }
@@ -75,42 +75,40 @@ defineProps<{
   background: var(--color-card-hover);
 }
 
-.position-1 {
-  background: rgba(52, 168, 83, 0.05);
-}
-
 .rank-badge {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--color-border);
   border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
+  font-size: 11px;
   font-weight: var(--font-weight-bold);
-}
-
-.position-1 .rank-badge {
-  background: var(--color-success);
-  color: white;
+  flex-shrink: 0;
 }
 
 .horse-color {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 .horse-name {
   flex: 1;
   font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
   color: var(--color-text);
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .finish-time {
-  font-size: var(--font-size-sm);
+  font-size: 11px;
   color: var(--color-text-muted);
   font-family: 'Courier New', monospace;
 }

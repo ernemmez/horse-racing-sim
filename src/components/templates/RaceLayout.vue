@@ -1,11 +1,12 @@
 <template>
   <div class="race-layout">
     <header class="race-header">
-      <h1>🐴 Horse Racing Game</h1>
+      <h1>🐴 Horse Racing</h1>
       <RaceControls 
         :hasProgram="hasProgram"
         :canStart="canStart"
         :isRaceActive="isRaceActive"
+        :isProgramFinished="isProgramFinished"
         @generate="handleGenerate"
         @start="handleStart"
         @pause="handlePause"
@@ -64,6 +65,7 @@ defineProps<{
   completedRoundsCount: number
   hasProgram: boolean
   canStart: boolean
+  isProgramFinished: boolean
 }>()
 
 const emit = defineEmits<{

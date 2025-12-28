@@ -2,8 +2,13 @@
   <div class="race-track">
     <div class="track-header">
       <h3>Race Track</h3>
-      <div v-if="currentRound" class="round-badge">
-        Lap {{ currentRound.roundNo }} - {{ currentRound.distance }}m
+      <div class="header-right">
+        <div class="timer-badge">
+          {{ formatTime(raceTime) }}
+        </div>
+        <div v-if="currentRound" class="round-badge">
+          Lap {{ currentRound.roundNo }} - {{ currentRound.distance }}m
+        </div>
       </div>
     </div>
     
@@ -42,14 +47,15 @@
             <!-- Finish Line -->
             <div class="finish-marker">
               <div class="finish-flag">🏁</div>
+              <!-- Confetti Effect -->
+              <div v-if="horsePositions[horse.id]?.position >= 100" class="confetti-container">
+                <div class="confetti c1"></div>
+                <div class="confetti c2"></div>
+                <div class="confetti c3"></div>
+                <div class="confetti c4"></div>
+                <div class="confetti c5"></div>
+              </div>
             </div>
-          </div>
-        </div>
-        
-        <!-- Lap Info -->
-        <div style="text-align: center;">
-          <div class="lap-info">
-            1st Lap - {{ currentRound.distance }}m
           </div>
         </div>
       </div>
@@ -59,12 +65,52 @@
 
 <script setup lang="ts">
 import type { Round, HorsePosition } from '../../store/types'
+import { computed, ref, onUnmounted, watch } from 'vue'
+import { useStore } from 'vuex'
+import { formatTime } from '../../utils/algorithms'
 
-defineProps<{
+const props = defineProps<{
   currentRound: Round | null
   isRaceActive: boolean
   horsePositions: Record<string, HorsePosition>
 }>()
+
+const store = useStore()
+const raceTime = ref(0)
+let timerInterval: number | null = null
+
+const raceStartTime = computed(() => store.state.race.raceStartTime)
+
+// Timer Logic
+watch(() => props.isRaceActive, (active) => {
+  if (active) {
+    if (timerInterval) clearInterval(timerInterval)
+    timerInterval = window.setInterval(() => {
+      if (raceStartTime.value) {
+        raceTime.value = Date.now() - raceStartTime.value
+      }
+    }, 50)
+  } else {
+    // Stop timer but keep final value until reset
+    if (timerInterval) clearInterval(timerInterval)
+    // If reset happens (raceStartTime becomes null)
+    if (!raceStartTime.value) raceTime.value = 0
+  }
+})
+
+// Also watch raceStartTime directly for resets
+watch(raceStartTime, (newTime) => {
+  if (!newTime) {
+    raceTime.value = 0
+    if (timerInterval) clearInterval(timerInterval)
+  } else if (props.isRaceActive && !timerInterval) {
+    // Resume case logic if needed, but above watcher handles main start
+  }
+})
+
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval)
+})
 </script>
 
 <style scoped>
@@ -89,6 +135,25 @@ defineProps<{
   margin: 0;
   font-size: var(--font-size-lg);
   color: var(--color-text);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.timer-badge {
+  background: #333;
+  color: #0F0;
+  font-family: 'Courier New', monospace;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 14px;
+  border: 1px solid #555;
+  min-width: 80px;
+  text-align: center;
 }
 
 .round-badge {
@@ -121,31 +186,11 @@ defineProps<{
   min-height: 100%;
 }
 
-.lap-info {
-  position: sticky;
-  bottom: var(--spacing-md);
-  left: 0;
-  right: 0;
-  text-align: center;
-  background: rgba(255, 107, 53, 0.95);
-  color: white;
-  padding: var(--spacing-xs) var(--spacing-md);
-  border-radius: var(--radius-md);
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-base);
-  box-shadow: var(--shadow-md);
-  z-index: 10;
-  display: inline-block;
-  margin: 0 auto;
-  max-width: fit-content;
-}
-
 .race-lanes {
   display: flex;
   flex-direction: column;
   gap: 0;
   padding: var(--spacing-md) 0;
-  padding-bottom: 60px;
 }
 
 .lane {
@@ -230,7 +275,6 @@ defineProps<{
   border-radius: 3px;
   white-space: nowrap;
   box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  /* Ensure text doesn't flip if parent flips */
   transform: scaleX(1); 
 }
 
@@ -250,7 +294,43 @@ defineProps<{
   font-size: 32px;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
   animation: wave 2s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
 }
+
+/* Confetti Animation */
+.confetti-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.confetti {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #f00;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+}
+
+.c1 { background: #ff0; animation: pop1 0.6s ease-out forwards; }
+.c2 { background: #0f0; animation: pop2 0.6s ease-out forwards; }
+.c3 { background: #00f; animation: pop3 0.6s ease-out forwards; }
+.c4 { background: #f0f; animation: pop4 0.6s ease-out forwards; }
+.c5 { background: #0ff; animation: pop5 0.6s ease-out forwards; }
+
+@keyframes pop1 { 0% { transform: translate(0,0) scale(0); opacity: 1; } 100% { transform: translate(-15px, -15px) scale(1) rotate(45deg); opacity: 0; } }
+@keyframes pop2 { 0% { transform: translate(0,0) scale(0); opacity: 1; } 100% { transform: translate(15px, -15px) scale(1) rotate(-45deg); opacity: 0; } }
+@keyframes pop3 { 0% { transform: translate(0,0) scale(0); opacity: 1; } 100% { transform: translate(-10px, 15px) scale(1) rotate(90deg); opacity: 0; } }
+@keyframes pop4 { 0% { transform: translate(0,0) scale(0); opacity: 1; } 100% { transform: translate(10px, 10px) scale(1) rotate(-90deg); opacity: 0; } }
+@keyframes pop5 { 0% { transform: translate(0,0) scale(0); opacity: 1; } 100% { transform: translate(0, -20px) scale(1) rotate(0deg); opacity: 0; } }
 
 @keyframes wave {
   0%, 100% { transform: rotate(-5deg); }
@@ -262,6 +342,4 @@ defineProps<{
   0%, 100% { transform: scaleX(-1) translateY(0) rotate(-5deg); }
   50% { transform: scaleX(-1) translateY(-3px) rotate(0deg); }
 }
-
-/* Removed unused .horse-silhouette */
 </style>

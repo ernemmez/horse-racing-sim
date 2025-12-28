@@ -56,7 +56,12 @@ const raceModule = {
         currentRound.horses.forEach((horse) => {
           commit("UPDATE_HORSE_POSITION", {
             horseId: horse.id,
-            position: { horseId: horse.id, position: 0, speed: 0 },
+            position: {
+              horseId: horse.id,
+              position: 0,
+              speed: 0,
+              finishTime: null,
+            },
           });
         });
       }
@@ -67,22 +72,50 @@ const raceModule = {
         if (!state.isRaceActive) return;
 
         let allFinished = true;
+        const now = Date.now();
+        const startTime = state.raceStartTime || now;
 
         currentRound.horses.forEach((horse) => {
           const currentPos = state.horsePositions[horse.id];
-          if (!currentPos || currentPos.position >= 100) return;
+
+          // If already finished, skip updates but keep in check for allFinished
+          if (currentPos && currentPos.finishTime !== null) return;
+
+          // If supposedly at 100 but no finish time (edge case), mark finished
+          if (
+            currentPos &&
+            currentPos.position >= 100 &&
+            !currentPos.finishTime
+          ) {
+            commit("UPDATE_HORSE_POSITION", {
+              horseId: horse.id,
+              position: { ...currentPos, finishTime: now - startTime },
+            });
+            return;
+          }
+
+          if (!currentPos) return; // Should not happen
 
           allFinished = false;
 
           const speed = calculateHorseSpeed(horse.condition, horse.stamina);
-          const newPosition = Math.min(
-            currentPos.position + (speed / currentRound.distance) * 2,
-            100
-          );
+          let newPosition =
+            currentPos.position + (speed / currentRound.distance) * 2;
+
+          let finishTime = null;
+          if (newPosition >= 100) {
+            newPosition = 100;
+            finishTime = now - startTime;
+          }
 
           commit("UPDATE_HORSE_POSITION", {
             horseId: horse.id,
-            position: { horseId: horse.id, position: newPosition, speed },
+            position: {
+              horseId: horse.id,
+              position: newPosition,
+              speed,
+              finishTime,
+            },
           });
         });
 
@@ -110,6 +143,19 @@ const raceModule = {
         rootState.program.rounds[rootState.program.currentRoundIndex || 0];
       if (!currentRound) return;
 
+      // Validation: Check if we are actually allowed to finish this round
+      // If race is not active, we shouldn't be here (extra safety)
+      // Also check if result for this round already exists to prevent double submission
+      const resultExists = rootState.results.completedRounds.some(
+        (r: any) => r.roundNo === currentRound.roundNo
+      );
+
+      if (resultExists) {
+        console.warn("Attempted to finish a round that already has results.");
+        commit("SET_RACE_ACTIVE", false); // Just ensure it's stopped
+        return;
+      }
+
       const rankings: Array<{
         horseId: string;
         horseName: string;
@@ -126,16 +172,15 @@ const raceModule = {
             horseName: horse.name,
             horseColor: horse.color,
             position: 0,
-            finishTime: Date.now() - (state.raceStartTime || Date.now()),
+            finishTime:
+              pos.finishTime ||
+              Date.now() - (state.raceStartTime || Date.now()),
           });
         }
       });
 
-      rankings.sort((a, b) => {
-        const posA = state.horsePositions[a.horseId]?.position || 0;
-        const posB = state.horsePositions[b.horseId]?.position || 0;
-        return posB - posA;
-      });
+      // Sort by finish time (ascending)
+      rankings.sort((a, b) => a.finishTime - b.finishTime);
 
       rankings.forEach((ranking, index) => {
         ranking.position = index + 1;
@@ -171,8 +216,14 @@ const raceModule = {
         { root: true }
       );
 
+      // Only advance if we successfully added results
       setTimeout(() => {
-        dispatch("program/nextRound", null, { root: true });
+        // Re-check current round to ensure we are seemingly still on the same one
+        // or just trust the flow?
+        // Let's safe guard:
+        if (rootState.program.currentRoundIndex === currentRound.roundNo - 1) {
+          dispatch("program/nextRound", null, { root: true });
+        }
       }, 1000);
     },
 

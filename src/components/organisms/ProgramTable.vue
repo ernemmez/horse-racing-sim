@@ -16,14 +16,17 @@
           :key="round.roundNo"
           :class="['round-block', { active: currentRoundIndex === round.roundNo - 1, completed: isRoundCompleted(round.roundNo) }]"
         >
-          <div class="round-header-row">
+          <div class="round-header-row" @click="toggleRound(round.roundNo)">
             <div class="round-number">R{{ round.roundNo }}</div>
             <div class="round-info">
               <div class="round-distance">{{ round.distance }}m</div>
               <div class="round-horses">{{ round.horses.length }} horses</div>
             </div>
+            <div class="toggle-icon">
+              {{ isRoundExpanded(round.roundNo) ? '�' : '�' }}
+            </div>
           </div>
-          <div class="horses-table">
+          <div class="horses-table" v-show="isRoundExpanded(round.roundNo)">
             <div v-for="(horse, idx) in round.horses" :key="horse.id" class="horse-row">
               <span class="pos">{{ idx + 1 }}</span>
               <span class="horse-name">{{ horse.name }}</span>
@@ -38,6 +41,7 @@
 <script setup lang="ts">
 import type { Round } from '../../store/types'
 import StatusBadge from '../atoms/StatusBadge.vue'
+import { ref } from 'vue'
 
 const props = defineProps<{
   rounds: Round[]
@@ -47,6 +51,35 @@ const props = defineProps<{
 
 const isRoundCompleted = (roundNo: number) => {
   return roundNo <= props.completedRoundsCount
+}
+
+// Map to track MANUALLY toggled state of each round
+// Key: roundNo, Value: true (force open) or false (force closed)
+// If not in map, default behavior applies: Only current round is open.
+const roundStateOverrides = ref<Record<number, boolean>>({})
+
+const toggleRound = (roundNo: number) => {
+  const currentState = isRoundExpanded(roundNo)
+  roundStateOverrides.value[roundNo] = !currentState
+}
+
+const isRoundExpanded = (roundNo: number) => {
+  // If manual override exists, use it
+  if (roundNo in roundStateOverrides.value) {
+    return roundStateOverrides.value[roundNo]
+  }
+  
+  // Default behavior:
+  // If currentRoundIndex is null (not started or finished), maybe open first/last?
+  // Let's say if finished, maybe none open or last open? Use null check.
+  
+  if (props.currentRoundIndex === null) {
+    // If finished (rounds exists), maybe open none
+    return false
+  }
+  
+  // Open ONLY if it matches current round index (0-based vs 1-based roundNo)
+  return (props.currentRoundIndex + 1) === roundNo
 }
 </script>
 
@@ -114,6 +147,18 @@ const isRoundCompleted = (roundNo: number) => {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-icon {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+.round-header-row:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .round-block.active .round-header-row {

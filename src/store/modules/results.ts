@@ -21,7 +21,19 @@ const resultsModule = {
       commit("ADD_ROUND_RESULT", result);
     },
 
-    addRoundResult({ commit }, result: RoundResult) {
+    addRoundResult({ commit, state }, result: RoundResult) {
+      // Validation: Check if this round number already exists
+      const exists = state.completedRounds.some(
+        (r) => r.roundNo === result.roundNo
+      );
+
+      if (exists) {
+        console.warn(
+          `Round ${result.roundNo} results already exist. Skipping.`
+        );
+        return;
+      }
+
       commit("ADD_ROUND_RESULT", result);
     },
 

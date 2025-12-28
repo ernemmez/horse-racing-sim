@@ -17,6 +17,7 @@ export interface HorsePosition {
   horseId: string;
   position: number; // 0-100%
   speed: number;
+  finishTime: number | null; // ms from start, null if not finished
 }
 
 export interface RoundResult {

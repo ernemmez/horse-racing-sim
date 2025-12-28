@@ -13,7 +13,10 @@
       >
         <div class="rank-badge">{{ ranking.position }}</div>
         <div class="horse-color" :style="{ backgroundColor: ranking.horseColor }" />
-        <div class="horse-name">{{ ranking.horseName }}</div>
+        <div class="horse-name">
+          {{ ranking.horseName }}
+          <span v-if="ranking.position === 1">🏆</span>
+        </div>
         <div class="finish-time">{{ formatTime(ranking.finishTime) }}</div>
       </div>
     </div>

@@ -33,19 +33,6 @@
             <div class="lane-track">
               <div class="track-line"></div>
               
-              <!-- Horse Silhouette -->
-              <div 
-                class="horse-runner"
-                :style="{ 
-                  left: `${horsePositions[horse.id]?.position || 0}%`,
-                }"
-                data-testid="horse-runner"
-              >
-                <div class="horse-emoji" :style="{ color: horse.color }" data-testid="horse-emoji">🏇</div>
-                <div class="horse-name-label" data-testid="horse-name">{{ horse.name }}</div>
-              </div>
-            </div>
-            
             <!-- Finish Line -->
             <div class="finish-marker" data-testid="finish-line">
               <div class="finish-flag">🏁</div>
@@ -56,6 +43,19 @@
                 <div class="confetti c3"></div>
                 <div class="confetti c4"></div>
                 <div class="confetti c5"></div>
+              </div>
+            </div>
+             <div 
+                class="horse-runner"
+                :style="{ 
+                  transform: `translateX(${horsePositions[horse.id]?.position || 0}%)`
+                }"
+                data-testid="horse-runner"
+              >
+                <div class="horse-inner">
+                  <div class="horse-emoji" :style="{ color: horse.color }" data-testid="horse-emoji">🏇</div>
+                  <div class="horse-name-label" data-testid="horse-name">{{ horse.name }}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -252,9 +252,19 @@ onUnmounted(() => {
 .horse-runner {
   position: absolute;
   top: 50%;
-  transform: translate(-50%, -50%);
-  transition: left 0.05s linear;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
   z-index: 2;
+  transition: transform 0.05s linear;
+  will-change: transform;
+}
+
+.horse-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;

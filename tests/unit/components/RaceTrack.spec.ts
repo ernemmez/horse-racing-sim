@@ -28,13 +28,27 @@ describe("RaceTrack.vue", () => {
     roundNo: 1,
     distance: 1200,
     horses: [
-      { id: "1", name: "Horse 1", color: "#000", condition: 100, stamina: 80 },
-      { id: "2", name: "Horse 2", color: "#FFF", condition: 100, stamina: 90 },
+      {
+        id: "1",
+        name: "Horse 1",
+        color: "#000",
+        condition: 100,
+        stamina: 80,
+        maxCondition: 100,
+      },
+      {
+        id: "2",
+        name: "Horse 2",
+        color: "#FFF",
+        condition: 100,
+        stamina: 90,
+        maxCondition: 100,
+      },
     ],
   };
 
   const mockPositions = {
-    "1": { horseId: "1", position: 50, speed: 10 },
+    "1": { horseId: "1", position: 50, speed: 10, finishTime: 0 },
     "2": { horseId: "2", position: 100, speed: 10, finishTime: 12345 },
   };
 
@@ -86,10 +100,10 @@ describe("RaceTrack.vue", () => {
     const horses = wrapper.findAll('[data-testid="horse-runner"]');
 
     // Horse 1 (position 50)
-    expect(horses[0].attributes("style")).toContain("left: 50%");
+    expect(horses[0].attributes("style")).toContain("translateX(50%)");
 
     // Horse 2 (position 100)
-    expect(horses[1].attributes("style")).toContain("left: 100%");
+    expect(horses[1].attributes("style")).toContain("translateX(100%)");
   });
 
   it("should show confetti for finished horses", () => {

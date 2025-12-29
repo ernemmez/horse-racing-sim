@@ -1,20 +1,27 @@
 <template>
-  <div class="results-panel">
+  <div class="results-panel" data-testid="results-panel">
     <div class="panel-header">
       <h3>Results</h3>
-      <StatusBadge v-if="results.length > 0" status="finished">
+      <StatusBadge 
+        v-if="results.length > 0" 
+        status="finished"
+        data-testid="results-count-badge"
+      >
         {{ results.length }} Laps
       </StatusBadge>
     </div>
     <div class="panel-content">
-      <div v-if="results.length === 0" class="empty-state">
+      <div v-if="results.length === 0" class="empty-state" data-testid="empty-state">
         No results yet
       </div>
-      <RoundResultCard 
-        v-for="result in reversedResults" 
-        :key="result.roundNo"
-        :result="result"
-      />
+      <div v-else class="results-list" data-testid="results-list">
+        <RoundResultCard 
+          v-for="result in reversedResults" 
+          :key="result.roundNo"
+          :result="result"
+          data-testid="round-result-card"
+        />
+      </div>
     </div>
   </div>
 </template>

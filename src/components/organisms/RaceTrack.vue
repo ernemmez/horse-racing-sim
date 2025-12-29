@@ -1,32 +1,33 @@
 <template>
-  <div class="race-track">
+  <div class="race-track" data-testid="race-track">
     <div class="track-header">
       <h3>Race Track</h3>
       <div class="header-right">
-        <div class="timer-badge">
+        <div class="timer-badge" data-testid="race-timer">
           {{ formatTime(raceTime) }}
         </div>
-        <div v-if="currentRound" class="round-badge">
+        <div v-if="currentRound" class="round-badge" data-testid="round-info-badge">
           Lap {{ currentRound.roundNo }} - {{ currentRound.distance }}m
         </div>
       </div>
     </div>
     
     <div class="track-area">
-      <div v-if="!currentRound" class="empty-state">
+      <div v-if="!currentRound" class="empty-state" data-testid="empty-state">
         Generate a program to start racing
       </div>
       
-      <div v-else class="race-container">
+      <div v-else class="race-container" data-testid="race-container">
         <!-- Racing Lanes -->
         <div class="race-lanes">
           <div 
             v-for="(horse, index) in currentRound.horses" 
             :key="horse.id"
             class="lane"
+            data-testid="race-lane"
           >
             <!-- Lane Number -->
-            <div class="lane-number">{{ index + 1 }}</div>
+            <div class="lane-number" data-testid="lane-number">{{ index + 1 }}</div>
             
             <!-- Track with dashed lines -->
             <div class="lane-track">
@@ -38,17 +39,18 @@
                 :style="{ 
                   left: `${horsePositions[horse.id]?.position || 0}%`,
                 }"
+                data-testid="horse-runner"
               >
-                <div class="horse-emoji" :style="{ color: horse.color }">🏇</div>
-                <div class="horse-name-label">{{ horse.name }}</div>
+                <div class="horse-emoji" :style="{ color: horse.color }" data-testid="horse-emoji">🏇</div>
+                <div class="horse-name-label" data-testid="horse-name">{{ horse.name }}</div>
               </div>
             </div>
             
             <!-- Finish Line -->
-            <div class="finish-marker">
+            <div class="finish-marker" data-testid="finish-line">
               <div class="finish-flag">🏁</div>
               <!-- Confetti Effect -->
-              <div v-if="horsePositions[horse.id]?.position >= 100" class="confetti-container">
+              <div v-if="horsePositions[horse.id]?.position >= 100" class="confetti-container" data-testid="finish-confetti">
                 <div class="confetti c1"></div>
                 <div class="confetti c2"></div>
                 <div class="confetti c3"></div>
@@ -96,7 +98,7 @@ watch(() => props.isRaceActive, (active) => {
     // If reset happens (raceStartTime becomes null)
     if (!raceStartTime.value) raceTime.value = 0
   }
-})
+}, { immediate: true })
 
 // Also watch raceStartTime directly for resets
 watch(raceStartTime, (newTime) => {

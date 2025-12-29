@@ -1,5 +1,5 @@
 <template>
-  <div :class="['status-badge', status]">
+  <div :class="['status-badge', status]" data-testid="status-badge">
     <slot />
   </div>
 </template>

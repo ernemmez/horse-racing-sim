@@ -1,33 +1,42 @@
 <template>
-  <div class="program-table">
+  <div class="program-table" data-testid="program-table">
     <div class="table-header">
       <h3>Program</h3>
-      <StatusBadge v-if="rounds.length > 0" :status="currentRoundIndex !== null ? 'active' : 'finished'">
+      <StatusBadge v-if="rounds.length > 0" :status="currentRoundIndex !== null ? 'active' : 'finished'" data-testid="program-status-badge">
         {{ currentRoundIndex !== null ? `Lap ${currentRoundIndex + 1}/6` : 'Finished' }}
       </StatusBadge>
     </div>
     <div class="table-content">
-      <div v-if="rounds.length === 0" class="empty-state">
+      <div v-if="rounds.length === 0" class="empty-state" data-testid="empty-state">
         No program generated
       </div>
-      <div v-else class="rounds-list">
+      <div v-else class="rounds-list" data-testid="rounds-list">
         <div 
           v-for="round in rounds" 
           :key="round.roundNo"
           :class="['round-block', { active: currentRoundIndex === round.roundNo - 1, completed: isRoundCompleted(round.roundNo) }]"
+          data-testid="round-block"
         >
-          <div class="round-header-row" @click="toggleRound(round.roundNo)">
-            <div class="round-number">R{{ round.roundNo }}</div>
+          <div 
+            class="round-header-row" 
+            @click="toggleRound(round.roundNo)"
+            data-testid="round-header"
+          >
+            <div class="round-number" data-testid="round-number">R{{ round.roundNo }}</div>
             <div class="round-info">
-              <div class="round-distance">{{ round.distance }}m</div>
+              <div class="round-distance" data-testid="round-distance">{{ round.distance }}m</div>
               <div class="round-horses">{{ round.horses.length }} horses</div>
             </div>
-            <div class="toggle-icon">
-              {{ isRoundExpanded(round.roundNo) ? '�' : '�' }}
+            <div class="toggle-icon" data-testid="toggle-icon">
+              {{ isRoundExpanded(round.roundNo) ? '🔼' : '🔽' }}
             </div>
           </div>
-          <div class="horses-table" v-show="isRoundExpanded(round.roundNo)">
-            <div v-for="(horse, idx) in round.horses" :key="horse.id" class="horse-row">
+          <div 
+            class="horses-table" 
+            v-show="isRoundExpanded(round.roundNo)"
+            data-testid="round-horses-list"
+          >
+            <div v-for="(horse, idx) in round.horses" :key="horse.id" class="horse-row" data-testid="horse-row">
               <span class="pos">{{ idx + 1 }}</span>
               <span class="horse-name">{{ horse.name }}</span>
             </div>

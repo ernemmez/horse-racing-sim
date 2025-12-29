@@ -1,23 +1,24 @@
 <template>
-  <div class="round-result-card card">
-    <div class="round-header">
+  <div class="round-result-card card" data-testid="round-result-card">
+    <div class="round-header" data-testid="round-header">
       <h4>Lap {{ result.roundNo }}</h4>
-      <span class="distance">{{ result.distance }}m</span>
+      <span class="distance" data-testid="round-distance">{{ result.distance }}m</span>
     </div>
-    <div class="rankings">
+    <div class="rankings" data-testid="rankings-list">
       <div 
         v-for="ranking in result.rankings" 
         :key="ranking.horseId"
         class="ranking-item"
         :class="`position-${ranking.position}`"
+        data-testid="ranking-item"
       >
-        <div class="rank-badge">{{ ranking.position }}</div>
-        <div class="horse-color" :style="{ backgroundColor: ranking.horseColor }" />
-        <div class="horse-name">
+        <div class="rank-badge" data-testid="rank-badge">{{ ranking.position }}</div>
+        <div class="horse-color" :style="{ backgroundColor: ranking.horseColor }" data-testid="horse-color" />
+        <div class="horse-name" data-testid="horse-name">
           {{ ranking.horseName }}
-          <span v-if="ranking.position === 1">🏆</span>
+          <span v-if="ranking.position === 1" data-testid="winner-trophy">🏆</span>
         </div>
-        <div class="finish-time">{{ formatTime(ranking.finishTime) }}</div>
+        <div class="finish-time" data-testid="finish-time">{{ formatTime(ranking.finishTime) }}</div>
       </div>
     </div>
   </div>

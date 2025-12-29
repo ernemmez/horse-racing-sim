@@ -1,17 +1,20 @@
 <template>
-  <div class="horse-list">
+  <div class="horse-list" data-testid="horse-list">
     <div class="list-header">
       <h3>Horses ({{ horses.length }})</h3>
-      <StatusBadge :status="horses.length === 20 ? 'active' : 'waiting'">
+      <StatusBadge 
+        :status="horses.length === 20 ? 'active' : 'waiting'"
+        data-testid="horse-list-status"
+      >
         {{ horses.length === 20 ? 'Ready' : 'Waiting...' }}
       </StatusBadge>
     </div>
     <div class="list-content">
-      <div v-if="horses.length === 0" class="empty-state">
+      <div v-if="horses.length === 0" class="empty-state" data-testid="empty-state">
         No horses generated
       </div>
       <div v-else class="horse-table-container">
-        <table class="horse-table">
+        <table class="horse-table" data-testid="horse-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -20,11 +23,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="horse in horses" :key="horse.id">
-              <td class="col-name">{{ horse.name }}</td>
+            <tr v-for="horse in horses" :key="horse.id" data-testid="horse-row">
+              <td class="col-name" data-testid="horse-name">{{ horse.name }}</td>
               <td class="col-condition">
                 <div class="condition-wrapper">
-                  <span :class="getConditionClass(horse.condition)">
+                  <span :class="getConditionClass(horse.condition)" data-testid="horse-condition">
                     {{ Math.floor(horse.condition) }}
                   </span>
                   <div 
@@ -32,13 +35,14 @@
                     @click="showTooltip($event, horse.id)"
                     @mouseenter="showTooltip($event, horse.id)"
                     @mouseleave="hideTooltip"
+                    data-testid="stamina-pill"
                   >
                     S:{{ horse.stamina }}
                   </div>
                 </div>
               </td>
               <td class="col-color">
-                <div class="color-box" :style="{ backgroundColor: horse.color }"></div>
+                <div class="color-box" :style="{ backgroundColor: horse.color }" data-testid="horse-color"></div>
               </td>
             </tr>
           </tbody>
@@ -52,6 +56,7 @@
       v-if="activeTooltip" 
       class="custom-tooltip" 
       :style="{ top: `${tooltipPos.y}px`, left: `${tooltipPos.x}px` }"
+      data-testid="stamina-tooltip"
     >
       <strong>🏆 Race Analysis:</strong><br>
       Stamina represents this horse's heart and endurance. <br><br>

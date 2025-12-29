@@ -3,6 +3,7 @@
     :class="['base-button', variant, { disabled }]"
     :disabled="disabled"
     @click="$emit('click')"
+    data-testid="base-button"
   >
     <slot />
   </button>

@@ -23,12 +23,12 @@ export const HORSE_COLORS = [
   "#81ECEC",
   "#FAB1A0",
   "#FF7675",
-  "#FD79A8",
-  "#FDCB6E",
   "#00CEC9",
   "#0984E3",
-  "#6C5CE7",
   "#D63031",
+  "#636E72",
+  "#2D3436",
+  "#B2BEC3",
 ];
 
 const HORSE_NAMES = [

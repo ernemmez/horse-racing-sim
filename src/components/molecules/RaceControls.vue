@@ -1,9 +1,10 @@
 <template>
-  <div class="race-controls">
+  <div class="race-controls" data-testid="race-controls">
     <BaseButton 
       variant="primary" 
       :disabled="isRaceActive || (hasProgram && !isProgramFinished)"
       @click="$emit('generate')"
+      data-testid="generate-button"
     >
       Generate Program
     </BaseButton>
@@ -12,6 +13,7 @@
       variant="secondary"
       :disabled="!canStart || isProgramFinished"
       @click="$emit('start')"
+      data-testid="start-button"
     >
       ▶️ Start Race
     </BaseButton>
@@ -19,6 +21,7 @@
       v-else
       variant="danger"
       @click="$emit('pause')"
+      data-testid="pause-button"
     >
       ⏸️ Pause Race
     </BaseButton>

@@ -76,4 +76,16 @@ describe("ProgramTable.vue", () => {
       "display: none"
     );
   });
+
+  it("should match snapshot structure", () => {
+    const wrapper = mount(ProgramTable, {
+      props: {
+        rounds: mockRounds,
+        currentRoundIndex: 0,
+        completedRoundsCount: 0,
+      },
+    });
+
+    expect(wrapper.html()).toMatchSnapshot();
+  });
 });

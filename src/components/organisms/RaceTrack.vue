@@ -1,7 +1,7 @@
 <template>
   <div class="race-track" data-testid="race-track">
     <div class="track-header">
-      <h3>Race Track</h3>
+      <h3>Hippodrome</h3>
       <div class="header-right">
         <div class="timer-badge" data-testid="race-timer">
           {{ formatTime(raceTime) }}

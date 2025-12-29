@@ -9,16 +9,16 @@
       Generate Program
     </BaseButton>
     <BaseButton 
-      v-if="!isRaceActive"
+      v-show="!isRaceActive"
       variant="secondary"
       :disabled="!canStart || isProgramFinished"
       @click="$emit('start')"
       data-testid="start-button"
     >
-      ▶️ Start Race
+      {{ isPaused ? '▶️ Resume' : '▶️ Start Race' }}
     </BaseButton>
     <BaseButton 
-      v-else
+      v-show="isRaceActive"
       variant="danger"
       @click="$emit('pause')"
       data-testid="pause-button"
@@ -35,6 +35,7 @@ defineProps<{
   hasProgram: boolean
   canStart: boolean
   isRaceActive: boolean
+  isPaused: boolean
   isProgramFinished: boolean
 }>()
 

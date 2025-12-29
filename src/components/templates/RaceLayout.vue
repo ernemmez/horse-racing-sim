@@ -6,6 +6,7 @@
         :hasProgram="hasProgram"
         :canStart="canStart"
         :isRaceActive="isRaceActive"
+        :isPaused="isPaused"
         :isProgramFinished="isProgramFinished"
         @generate="handleGenerate"
         @start="handleStart"
@@ -65,6 +66,7 @@ defineProps<{
   completedRoundsCount: number
   hasProgram: boolean
   canStart: boolean
+  isPaused: boolean
   isProgramFinished: boolean
 }>()
 

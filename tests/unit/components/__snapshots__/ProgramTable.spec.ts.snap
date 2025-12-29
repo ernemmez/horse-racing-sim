@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProgramTable.vue > should match snapshot structure 1`] = `
+"<div data-v-9af777d2="" class="program-table" data-testid="program-table">
+  <div data-v-9af777d2="" class="table-header">
+    <h3 data-v-9af777d2="">Program</h3>
+    <div data-v-e9429517="" data-v-9af777d2="" class="status-badge active" data-testid="program-status-badge">Lap 1/6</div>
+  </div>
+  <div data-v-9af777d2="" class="table-content">
+    <div data-v-9af777d2="" class="rounds-list" data-testid="rounds-list">
+      <div data-v-9af777d2="" class="round-block active" data-testid="round-block">
+        <div data-v-9af777d2="" class="round-header-row" data-testid="round-header">
+          <div data-v-9af777d2="" class="round-number" data-testid="round-number">R1</div>
+          <div data-v-9af777d2="" class="round-info">
+            <div data-v-9af777d2="" class="round-distance" data-testid="round-distance">1200m</div>
+            <div data-v-9af777d2="" class="round-horses">0 horses</div>
+          </div>
+          <div data-v-9af777d2="" class="toggle-icon" data-testid="toggle-icon">🔼</div>
+        </div>
+        <div data-v-9af777d2="" class="horses-table" data-testid="round-horses-list"></div>
+      </div>
+      <div data-v-9af777d2="" class="round-block" data-testid="round-block">
+        <div data-v-9af777d2="" class="round-header-row" data-testid="round-header">
+          <div data-v-9af777d2="" class="round-number" data-testid="round-number">R2</div>
+          <div data-v-9af777d2="" class="round-info">
+            <div data-v-9af777d2="" class="round-distance" data-testid="round-distance">1400m</div>
+            <div data-v-9af777d2="" class="round-horses">0 horses</div>
+          </div>
+          <div data-v-9af777d2="" class="toggle-icon" data-testid="toggle-icon">🔽</div>
+        </div>
+        <div data-v-9af777d2="" class="horses-table" data-testid="round-horses-list" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+</div>"
+`;

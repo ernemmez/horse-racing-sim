@@ -10,6 +10,7 @@
     :completedRoundsCount="completedRoundsCount"
     :hasProgram="hasProgram"
     :canStart="canStart"
+    :isPaused="isPaused"
     :isProgramFinished="isProgramFinished"
     @generate="handleGenerate"
     @start="handleStart"
@@ -39,6 +40,14 @@ const canStart = computed(() =>
   hasProgram.value && 
   !isRaceActive.value && 
   currentRound.value !== null
+)
+
+// isPaused: if we have positions but race is not active AND program is not finished
+// When program is finished, we should show "Start Race" not "Resume"
+const isPaused = computed(() => 
+  !isRaceActive.value && 
+  Object.keys(horsePositions.value).length > 0 && 
+  !isProgramFinished.value
 )
 
 const handleGenerate = () => {

@@ -54,6 +54,14 @@ The simulation uses a custom algorithm where outcomes are not pre-determined but
 - **Speed Calculation:** `(Condition * Condition% * 0.8) + (Stamina * Stamina%) + RandomFactor`
 - **Stamina System:** Horses lose condition after every race. The amount lost depends on the race distance and the horse's stamina stat. High stamina horses recover faster and perform better in longer/successive races.
 
+### ⚡ Performance & Engineering Decisions
+
+To ensure a smooth 60 FPS experience, the application creates a separation between **Global State** and **Game Loop**:
+
+- **Composable Game Engine (`useRace`):** The high-frequency race loop runs outside of Vuex to avoid mutation overhead. It uses local reactive state with `requestAnimationFrame` for maximum performance.
+- **GPU Accelerated Rendering:** Horse movements use CSS `transform: translateX(...)` instead of `left/margin`. This offloads rendering to the GPU (Composite Layer), preventing Layout Thrashing.
+- **Global State (Vuex):** Used only for low-frequency data like Race Results, Program Schedule, and Roster Management.
+
 ### State Management (Vuex)
 
 The application state is modularized for scalability:

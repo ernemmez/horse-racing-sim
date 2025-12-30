@@ -32,9 +32,9 @@
                   </span>
                   <div 
                     class="stamina-pill" 
-                    @click="showTooltip($event, horse.id)"
-                    @mouseenter="showTooltip($event, horse.id)"
-                    @mouseleave="hideTooltip"
+                    @click="(e) => handleTooltipShow(e, horse.id)"
+                    @mouseenter="(e) => handleTooltipShow(e, horse.id)"
+                    @mouseleave="handleTooltipHide"
                     data-testid="stamina-pill"
                   >
                     S:{{ horse.stamina }}
@@ -84,7 +84,8 @@ const getConditionClass = (condition: number) => {
 const activeTooltip = ref<string | null>(null)
 const tooltipPos = reactive({ x: 0, y: 0 })
 
-const showTooltip = (event: MouseEvent, id: string) => {
+// Optimized: Single handler function instead of inline functions
+const handleTooltipShow = (event: MouseEvent, id: string) => {
   activeTooltip.value = id
   
   const rect = (event.target as HTMLElement).getBoundingClientRect();
@@ -93,7 +94,7 @@ const showTooltip = (event: MouseEvent, id: string) => {
   tooltipPos.y = rect.top;
 }
 
-const hideTooltip = () => {
+const handleTooltipHide = () => {
   activeTooltip.value = null
 }
 </script>

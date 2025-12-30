@@ -4,6 +4,7 @@ import {
   getUniqueNames,
   generateId,
 } from "../../utils/algorithms";
+import { RACE_CONSTANTS } from "../../utils/constants";
 
 const horsesModule = {
   namespaced: true,
@@ -33,18 +34,22 @@ const horsesModule = {
 
   actions: {
     generateHorses({ commit }) {
-      const colors = getUniqueColors(20);
-      const names = getUniqueNames(20);
+      const colors = getUniqueColors(RACE_CONSTANTS.HORSE_COUNT);
+      const names = getUniqueNames(RACE_CONSTANTS.HORSE_COUNT);
 
       const horses: Horse[] = [];
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < RACE_CONSTANTS.HORSE_COUNT; i++) {
         horses.push({
           id: generateId(),
           name: names[i],
           color: colors[i],
-          condition: 100,
-          stamina: Math.floor(Math.random() * 41) + 60,
-          maxCondition: 100,
+          condition: RACE_CONSTANTS.MAX_CONDITION,
+          stamina:
+            Math.floor(
+              Math.random() *
+                (RACE_CONSTANTS.MAX_STAMINA - RACE_CONSTANTS.MIN_STAMINA + 1)
+            ) + RACE_CONSTANTS.MIN_STAMINA,
+          maxCondition: RACE_CONSTANTS.MAX_CONDITION,
         });
       }
 

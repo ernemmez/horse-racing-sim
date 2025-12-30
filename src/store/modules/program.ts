@@ -1,5 +1,6 @@
 import type { Horse, Round, ProgramState } from "../types";
 import { ROUND_DISTANCES, shuffleArray } from "../../utils/algorithms";
+import { RACE_CONSTANTS, ROUND_CONFIG } from "../../utils/constants";
 
 const programModule = {
   namespaced: true,
@@ -22,15 +23,18 @@ const programModule = {
     generateProgram({ commit, rootState }) {
       const allHorses = rootState.horses.horses;
 
-      if (allHorses.length < 20) {
-        console.error("Need at least 20 horses");
+      if (allHorses.length < RACE_CONSTANTS.HORSE_COUNT) {
+        console.error(`Need at least ${RACE_CONSTANTS.HORSE_COUNT} horses`);
         return;
       }
 
       const rounds: Round[] = [];
 
-      for (let i = 0; i < 6; i++) {
-        const lapHorses = shuffleArray<Horse>(allHorses).slice(0, 10);
+      for (let i = 0; i < ROUND_CONFIG.TOTAL_ROUNDS; i++) {
+        const lapHorses = shuffleArray<Horse>(allHorses).slice(
+          0,
+          ROUND_CONFIG.MIN_HORSES_PER_ROUND
+        );
 
         rounds.push({
           roundNo: i + 1,
@@ -73,6 +77,14 @@ const programModule = {
     remainingRounds: (state): number => {
       if (state.currentRoundIndex === null) return 0;
       return state.rounds.length - state.currentRoundIndex - 1;
+    },
+    hasRounds: (state): boolean => state.rounds.length > 0,
+    canStartRace: (state, getters, rootState): boolean => {
+      return (
+        getters.hasRounds &&
+        !rootState.race.isRaceActive &&
+        getters.currentRound !== null
+      );
     },
   },
 };

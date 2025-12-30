@@ -114,7 +114,12 @@ watch(() => props.isRaceActive, (active) => {
   }
 })
 
-watch(() => props.horsePositions, (positions) => {
+const leaderPosition = computed(() => {
+  const positions = Object.values(props.horsePositions).map(h => h.position)
+  return positions.length > 0 ? Math.max(...positions) : 0
+})
+
+watch(leaderPosition, (maxPosition) => {
   if (!props.isRaceActive || !trackAreaRef.value) return
   if (window.innerWidth > 768) return
   
@@ -124,15 +129,7 @@ watch(() => props.horsePositions, (positions) => {
     scrollTimeout = null
   }, 200)
   
-  let maxPosition = 0
-  Object.values(positions).forEach(horsePos => {
-    if (horsePos.position > maxPosition) {
-      maxPosition = horsePos.position
-    }
-  })
-  
   if (maxPosition < 5) return
-  
   if (maxPosition > 70) return
   
   const container = trackAreaRef.value
@@ -155,7 +152,7 @@ watch(() => props.horsePositions, (positions) => {
     left: clampedScroll,
     behavior: 'smooth'
   })
-}, { deep: true })
+}, { flush: 'post' }) // Run after DOM updates
 </script>
 
 <style scoped>

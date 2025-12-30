@@ -15,13 +15,8 @@ const isRaceActive = computed(() => store.getters['race/isRaceActive'])
 const results = computed(() => store.getters['results/allResults'])
 const completedRoundsCount = computed(() => store.getters['results/completedCount'])
 const isProgramFinished = computed(() => store.getters['program/isFinished'])
-
-const hasProgram = computed(() => rounds.value.length > 0)
-const canStart = computed(() => 
-  hasProgram.value && 
-  !isRaceActive.value && 
-  currentRound.value !== null
-)
+const canStart = computed(() => store.getters['program/canStartRace'])
+const hasProgram = computed(() => store.getters['program/hasRounds'])
 
 watch(hasProgram, (newVal) => {
   if (!newVal) resetSimulation()
@@ -29,7 +24,7 @@ watch(hasProgram, (newVal) => {
 
 const isPaused = computed(() => 
   !isRaceActive.value && 
-  Object.keys(horsePositions.value).length > 0 && 
+  Object.keys(horsePositions.value).length > 0 &&
   !isProgramFinished.value
 )
 

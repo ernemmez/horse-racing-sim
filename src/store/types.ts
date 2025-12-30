@@ -2,22 +2,22 @@ export interface Horse {
   id: string;
   name: string;
   color: string;
-  condition: number; // Current condition (0-100, depletes during races)
-  stamina: number; // Base stamina/endurance (60-100)
-  maxCondition: number; // Always 100
+  condition: number;
+  stamina: number;
+  maxCondition: number;
 }
 
 export interface Round {
-  roundNo: number; // 1-6
-  distance: number; // meters: 1200, 1400, 1600, 1800, 2000, 2200
+  roundNo: number;
+  distance: number;
   horses: Horse[];
 }
 
 export interface HorsePosition {
   horseId: string;
-  position: number; // 0-100%
+  position: number;
   speed: number;
-  finishTime: number | null; // ms from start, null if not finished
+  finishTime: number | null;
 }
 
 export interface RoundResult {
@@ -31,7 +31,7 @@ export interface HorseRanking {
   horseName: string;
   horseColor: string;
   position: number;
-  finishTime: number; // ms
+  finishTime: number;
 }
 
 export interface RootState {

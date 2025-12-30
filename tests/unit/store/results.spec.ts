@@ -35,8 +35,10 @@ describe("Results Module", () => {
       // Attempt to add Round 1 again
       const newResult = { roundNo: 1, distance: 1200, rankings: [] };
 
-      // @ts-ignore
-      resultsModule.actions.addRoundResult({ commit, state: s }, newResult);
+      resultsModule.actions.addRoundResult(
+        { commit, state: s } as any,
+        newResult
+      );
 
       expect(commit).not.toHaveBeenCalled();
     });
@@ -48,8 +50,10 @@ describe("Results Module", () => {
 
       const newResult = { roundNo: 2, distance: 1400, rankings: [] };
 
-      // @ts-ignore
-      resultsModule.actions.addRoundResult({ commit, state: s }, newResult);
+      resultsModule.actions.addRoundResult(
+        { commit, state: s } as any,
+        newResult
+      );
 
       expect(commit).toHaveBeenCalledWith("ADD_ROUND_RESULT", newResult);
     });

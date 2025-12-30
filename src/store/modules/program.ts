@@ -30,8 +30,6 @@ const programModule = {
       const rounds: Round[] = [];
 
       for (let i = 0; i < 6; i++) {
-        // For each round, select 10 random horses from the available 20
-        // This ensures fresh combinations for every lap
         const lapHorses = shuffleArray<Horse>(allHorses).slice(0, 10);
 
         rounds.push({

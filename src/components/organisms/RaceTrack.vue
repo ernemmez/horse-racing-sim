@@ -18,7 +18,6 @@
       </div>
       
       <div v-else class="race-container" data-testid="race-container">
-        <!-- Racing Lanes -->
         <div class="race-lanes">
           <div 
             v-for="(horse, index) in currentRound.horses" 
@@ -26,17 +25,13 @@
             class="lane"
             data-testid="race-lane"
           >
-            <!-- Lane Number -->
             <div class="lane-number" data-testid="lane-number">{{ index + 1 }}</div>
             
-            <!-- Track with dashed lines -->
             <div class="lane-track">
               <div class="track-line"></div>
               
-            <!-- Finish Line -->
             <div class="finish-marker" data-testid="finish-line">
               <div class="finish-flag">🏁</div>
-              <!-- Confetti Effect -->
               <div v-if="horsePositions[horse.id]?.position >= 100" class="confetti-container" data-testid="finish-confetti">
                 <div class="confetti c1"></div>
                 <div class="confetti c2"></div>
@@ -83,7 +78,6 @@ let timerInterval: number | null = null
 
 const raceStartTime = computed(() => store.state.race.raceStartTime)
 
-// Timer Logic
 watch(() => props.isRaceActive, (active) => {
   if (active) {
     if (timerInterval) clearInterval(timerInterval)
@@ -93,20 +87,15 @@ watch(() => props.isRaceActive, (active) => {
       }
     }, 50)
   } else {
-    // Stop timer but keep final value until reset
     if (timerInterval) clearInterval(timerInterval)
-    // If reset happens (raceStartTime becomes null)
     if (!raceStartTime.value) raceTime.value = 0
   }
 }, { immediate: true })
 
-// Also watch raceStartTime directly for resets
 watch(raceStartTime, (newTime) => {
   if (!newTime) {
     raceTime.value = 0
     if (timerInterval) clearInterval(timerInterval)
-  } else if (props.isRaceActive && !timerInterval) {
-    // Resume case logic if needed, but above watcher handles main start
   }
 })
 
@@ -114,33 +103,27 @@ onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval)
 })
 
-// Auto-scroll to follow leader (mobile only)
 const trackAreaRef = ref<HTMLElement | null>(null)
 let lastScrollPos = 0
 let scrollTimeout: number | null = null
 
-// Reset scroll when race ends
 watch(() => props.isRaceActive, (active) => {
   if (!active && trackAreaRef.value && window.innerWidth <= 768) {
-    // Reset scroll to start when race ends
     trackAreaRef.value.scrollTo({ left: 0, behavior: 'smooth' })
     lastScrollPos = 0
   }
 })
 
 watch(() => props.horsePositions, (positions) => {
-  // Only on mobile and when race is active
   if (!props.isRaceActive || !trackAreaRef.value) return
   if (window.innerWidth > 768) return
   
-  // Throttle scroll updates - only every 200ms
   if (scrollTimeout) return
   
   scrollTimeout = window.setTimeout(() => {
     scrollTimeout = null
   }, 200)
   
-  // Find leader horse (max position)
   let maxPosition = 0
   Object.values(positions).forEach(horsePos => {
     if (horsePos.position > maxPosition) {
@@ -148,11 +131,8 @@ watch(() => props.horsePositions, (positions) => {
     }
   })
   
-  // Don't scroll if race just started
   if (maxPosition < 5) return
   
-  // Stop scrolling when finish line becomes visible (leader at ~70%)
-  // This ensures finish flags are in viewport
   if (maxPosition > 70) return
   
   const container = trackAreaRef.value
@@ -161,20 +141,16 @@ watch(() => props.horsePositions, (positions) => {
   const trackWidth = container.scrollWidth - container.clientWidth
   const viewportWidth = container.clientWidth
   
-  // Calculate where leader should be on screen (30% from left)
   const leaderTrackPos = (maxPosition / 100) * trackWidth
   const targetScrollPos = leaderTrackPos - (viewportWidth * 0.3)
   
-  // Clamp to valid range
   const clampedScroll = Math.max(0, Math.min(targetScrollPos, trackWidth))
   
-  // Only scroll if change is significant (>10px) to avoid jitter
   const scrollDelta = Math.abs(clampedScroll - lastScrollPos)
   if (scrollDelta < 10) return
   
   lastScrollPos = clampedScroll
   
-  // Very smooth scroll
   container.scrollTo({
     left: clampedScroll,
     behavior: 'smooth'
@@ -244,7 +220,6 @@ watch(() => props.horsePositions, (positions) => {
   position: relative;
 }
 
-/* Scrollbar styling */
 .track-area::-webkit-scrollbar {
   height: 8px;
   width: 8px;
@@ -273,7 +248,6 @@ watch(() => props.horsePositions, (positions) => {
 .race-container {
   position: relative;
   min-height: 100%;
-  /* Ensure track is wide enough to look good on mobile, triggering scroll */
   min-width: 600px; 
 }
 
@@ -399,7 +373,6 @@ watch(() => props.horsePositions, (positions) => {
   z-index: 2;
 }
 
-/* Confetti Animation */
 .confetti-container {
   position: absolute;
   top: 50%;
@@ -438,13 +411,11 @@ watch(() => props.horsePositions, (positions) => {
   50% { transform: rotate(5deg); }
 }
 
-/* Racing animation */
 @keyframes gallop {
   0%, 100% { transform: scaleX(-1) translateY(0) rotate(-5deg); }
   50% { transform: scaleX(-1) translateY(-3px) rotate(0deg); }
 }
 
-/* Mobile Optimizations */
 @media (max-width: 768px) {
   .track-header {
     padding: var(--spacing-sm) var(--spacing-md);

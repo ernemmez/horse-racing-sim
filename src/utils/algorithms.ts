@@ -55,7 +55,6 @@ const HORSE_NAMES = [
 ];
 export const ROUND_DISTANCES = [1200, 1400, 1600, 1800, 2000, 2200];
 
-// Fisher-Yates shuffle
 export function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -77,25 +76,16 @@ export function generateCondition(): number {
   return Math.floor(Math.random() * 100) + 1;
 }
 
-// Speed calculation: Stamina + Condition synergy
-// High stamina + high condition = fast and consistent
-// Low condition = performance drops significantly
 export function calculateHorseSpeed(
   condition: number,
   stamina: number
 ): number {
-  // Condition multiplier decreases as horse tires
-  const conditionMultiplier = condition / 100; // 0.0 - 1.0
+  const conditionMultiplier = condition / 100;
+  const staminaBonus = stamina / 200;
 
-  // Stamina provides base speed bonus
-  const staminaBonus = stamina / 200; // 0.3 - 0.5
-
-  // Combined formula: condition affects consistency, stamina affects ceiling
-  // Condition dropped -> Speed decreases consistently
   const baseSpeed =
     condition * conditionMultiplier * 0.8 + stamina * staminaBonus;
 
-  // Add randomness (reduced from 30 to 20 for more strategy-driven races)
   const randomFactor = Math.random() * 20;
 
   return baseSpeed + randomFactor;
@@ -115,19 +105,8 @@ export function formatPosition(position: number): string {
   return position + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
 }
 
-// Advanced Stamina System
 const CONDITION_DEPLETION_FACTOR = 0.5;
 
-/**
- * Calculate condition loss after a race
- * Higher stamina = less depletion
- * Longer distance = more depletion
- *
- * @param distance Race distance in meters (1200-2200)
- * @param stamina Horse stamina (60-100)
- * @param currentCondition Current condition (0-100)
- * @returns Condition loss amount
- */
 export function calculateConditionLoss(
   distance: number,
   stamina: number,
@@ -135,24 +114,14 @@ export function calculateConditionLoss(
 ): number {
   if (currentCondition <= 0) return 0;
 
-  // Distance factor: 1200m = 1.2, 2200m = 2.2
   const distanceFactor = distance / 1000;
-
-  // Stamina factor: High stamina (90) = 10, Low stamina (60) = 40
   const staminaFactor = 100 - stamina;
-
-  // Base depletion
   const baseLoss = distanceFactor * staminaFactor * CONDITION_DEPLETION_FACTOR;
-
-  // Ensure some minimum depletion (racing is tiring!)
-  const minLoss = distance / 1200; // At least 1 point per 1200m
+  const minLoss = distance / 1200;
 
   return Math.max(minLoss, baseLoss);
 }
 
-/**
- * Apply condition loss to a horse
- */
 export function applyConditionLoss(
   currentCondition: number,
   loss: number

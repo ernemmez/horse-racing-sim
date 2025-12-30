@@ -94,9 +94,6 @@ const isRoundCompleted = (roundNo: number) => {
   return roundNo <= props.completedRoundsCount
 }
 
-// Map to track MANUALLY toggled state of each round
-// Key: roundNo, Value: true (force open) or false (force closed)
-// If not in map, default behavior applies: Only current round is open.
 const roundStateOverrides = ref<Record<number, boolean>>({})
 
 const toggleRound = (roundNo: number) => {
@@ -105,29 +102,20 @@ const toggleRound = (roundNo: number) => {
 }
 
 const isRoundExpanded = (roundNo: number) => {
-  // If manual override exists, use it
   if (roundNo in roundStateOverrides.value) {
     return roundStateOverrides.value[roundNo]
   }
   
-  // Default behavior:
-  // If currentRoundIndex is null (not started or finished), maybe open first/last?
-  // Let's say if finished, maybe none open or last open? Use null check.
-  
   if (props.currentRoundIndex === null) {
-    // If finished (rounds exists), maybe open none
     return false
   }
   
-  // Open ONLY if it matches current round index (0-based vs 1-based roundNo)
   return (props.currentRoundIndex + 1) === roundNo
 }
 
-// Mobile bottom sheet state
 const activeTooltipRound = ref<number | null>(null)
 
 const showMobileTooltip = (event: TouchEvent, roundNo: number) => {
-  // Only on mobile
   if (window.innerWidth > 768) return
   
   event.preventDefault()
@@ -307,9 +295,7 @@ const getTooltipRound = () => {
   text-overflow: ellipsis;
 }
 
-/* Mobile Snap Scroll Carousel */
 @media (max-width: 768px) {
-  /* Header optimization */
   .table-header {
     padding: var(--spacing-sm) var(--spacing-md);
   }
@@ -376,7 +362,6 @@ const getTooltipRound = () => {
     font-size: 10px;
   }
   
-  /* Hide horses table on mobile */
   .horses-table {
     display: none !important;
   }
@@ -387,7 +372,6 @@ const getTooltipRound = () => {
   }
 }
 
-/* Mobile Bottom Sheet */
 .bottom-sheet-overlay {
   position: fixed;
   top: 0;

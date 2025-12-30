@@ -41,8 +41,7 @@ describe("Program Module", () => {
       s.rounds = Array(6).fill({}) as any;
       s.currentRoundIndex = 0;
 
-      // @ts-ignore
-      programModule.actions.nextRound({ commit, state: s, dispatch });
+      programModule.actions.nextRound({ commit, state: s, dispatch } as any);
 
       expect(commit).toHaveBeenCalledWith("SET_CURRENT_ROUND", 1);
       expect(dispatch).toHaveBeenCalledWith("race/resetRace", null, {

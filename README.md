@@ -1,4 +1,4 @@
-# 🐎 Horse Racing Simulator - Case Study
+# 🐎 Horse Racing Simulator
 
 A responsive, feature-rich horse racing simulation game built with **Vue 3** and **TypeScript**. This project demonstrates clean architecture, state management, and modern testing practices.
 

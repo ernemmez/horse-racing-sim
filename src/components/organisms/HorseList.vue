@@ -87,13 +87,9 @@ const tooltipPos = reactive({ x: 0, y: 0 })
 const showTooltip = (event: MouseEvent, id: string) => {
   activeTooltip.value = id
   
-  // Calculate position logic:
-  // Show to the right of the cursor if possible, or slightly offset
   const rect = (event.target as HTMLElement).getBoundingClientRect();
   
-  // Position tooltip to the right of the pill
   tooltipPos.x = rect.right + 10;
-  // Center vertically relative to pill
   tooltipPos.y = rect.top;
 }
 
@@ -207,7 +203,6 @@ const hideTooltip = () => {
   border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Arrow pointing left */
 .custom-tooltip::after {
   content: '';
   position: absolute;
@@ -236,7 +231,6 @@ const hideTooltip = () => {
 .text-warning { color: #F59E0B; }
 .text-danger { color: var(--color-danger); }
 
-/* Mobile Snap Scroll Carousel */
 @media (max-width: 768px) {
   .list-content {
     padding: 0;
@@ -297,7 +291,6 @@ const hideTooltip = () => {
     display: none;
   }
   
-  /* Horse name */
   .col-name {
     font-size: 13px;
     font-weight: 700;
@@ -311,7 +304,6 @@ const hideTooltip = () => {
     border-bottom: 1px solid var(--color-border);
   }
   
-  /* Condition */
   .col-condition {
     margin: 8px 0;
     width: 100%;
@@ -334,7 +326,6 @@ const hideTooltip = () => {
     border-radius: 12px;
   }
   
-  /* Color */
   .col-color {
     width: 100%;
     display: flex;
@@ -348,7 +339,6 @@ const hideTooltip = () => {
     border-radius: 4px;
   }
   
-  /* Header optimization */
   .list-header {
     padding: var(--spacing-sm) var(--spacing-md);
   }

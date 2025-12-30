@@ -12,7 +12,7 @@
       </div>
     </div>
     
-    <div class="track-area">
+    <div class="track-area" ref="trackAreaRef">
       <div v-if="!currentRound" class="empty-state" data-testid="empty-state">
         Generate a program to start racing
       </div>
@@ -113,6 +113,73 @@ watch(raceStartTime, (newTime) => {
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval)
 })
+
+// Auto-scroll to follow leader (mobile only)
+const trackAreaRef = ref<HTMLElement | null>(null)
+let lastScrollPos = 0
+let scrollTimeout: number | null = null
+
+// Reset scroll when race ends
+watch(() => props.isRaceActive, (active) => {
+  if (!active && trackAreaRef.value && window.innerWidth <= 768) {
+    // Reset scroll to start when race ends
+    trackAreaRef.value.scrollTo({ left: 0, behavior: 'smooth' })
+    lastScrollPos = 0
+  }
+})
+
+watch(() => props.horsePositions, (positions) => {
+  // Only on mobile and when race is active
+  if (!props.isRaceActive || !trackAreaRef.value) return
+  if (window.innerWidth > 768) return
+  
+  // Throttle scroll updates - only every 200ms
+  if (scrollTimeout) return
+  
+  scrollTimeout = window.setTimeout(() => {
+    scrollTimeout = null
+  }, 200)
+  
+  // Find leader horse (max position)
+  let maxPosition = 0
+  Object.values(positions).forEach(horsePos => {
+    if (horsePos.position > maxPosition) {
+      maxPosition = horsePos.position
+    }
+  })
+  
+  // Don't scroll if race just started
+  if (maxPosition < 5) return
+  
+  // Stop scrolling when finish line becomes visible (leader at ~70%)
+  // This ensures finish flags are in viewport
+  if (maxPosition > 70) return
+  
+  const container = trackAreaRef.value
+  if (!container) return
+  
+  const trackWidth = container.scrollWidth - container.clientWidth
+  const viewportWidth = container.clientWidth
+  
+  // Calculate where leader should be on screen (30% from left)
+  const leaderTrackPos = (maxPosition / 100) * trackWidth
+  const targetScrollPos = leaderTrackPos - (viewportWidth * 0.3)
+  
+  // Clamp to valid range
+  const clampedScroll = Math.max(0, Math.min(targetScrollPos, trackWidth))
+  
+  // Only scroll if change is significant (>10px) to avoid jitter
+  const scrollDelta = Math.abs(clampedScroll - lastScrollPos)
+  if (scrollDelta < 10) return
+  
+  lastScrollPos = clampedScroll
+  
+  // Very smooth scroll
+  container.scrollTo({
+    left: clampedScroll,
+    behavior: 'smooth'
+  })
+}, { deep: true })
 </script>
 
 <style scoped>
@@ -173,8 +240,28 @@ onUnmounted(() => {
   padding: var(--spacing-lg);
   background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
   overflow-y: auto;
+  overflow-x: auto;
   position: relative;
-  max-height: 600px;
+}
+
+/* Scrollbar styling */
+.track-area::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.track-area::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.05);
+  border-radius: 4px;
+}
+
+.track-area::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.1);
+  border-radius: 4px;
+}
+
+.track-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.2);
 }
 
 .empty-state {
@@ -186,6 +273,8 @@ onUnmounted(() => {
 .race-container {
   position: relative;
   min-height: 100%;
+  /* Ensure track is wide enough to look good on mobile, triggering scroll */
+  min-width: 600px; 
 }
 
 .race-lanes {
@@ -353,5 +442,65 @@ onUnmounted(() => {
 @keyframes gallop {
   0%, 100% { transform: scaleX(-1) translateY(0) rotate(-5deg); }
   50% { transform: scaleX(-1) translateY(-3px) rotate(0deg); }
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .track-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+  
+  .track-header h3 {
+    font-size: 16px;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .header-right {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  
+  .timer-badge {
+    padding: 3px 8px;
+    font-size: 11px;
+    min-width: 60px;
+  }
+  
+  .round-badge {
+    padding: 3px 10px;
+    font-size: 11px;
+    letter-spacing: 0.3px;
+  }
+  
+  .track-area {
+    padding: var(--spacing-sm);
+  }
+  
+  .lane {
+    height: 36px;
+  }
+  
+  .lane-number {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+    margin-left: 4px;
+  }
+  
+  .horse-emoji {
+    font-size: 20px;
+  }
+  
+  .horse-name-label {
+    font-size: 8px;
+    padding: 1px 3px;
+  }
+  
+  .finish-flag {
+    font-size: 26px;
+  }
 }
 </style>

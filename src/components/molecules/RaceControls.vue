@@ -55,4 +55,11 @@ defineEmits<{
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
+
+@media (max-width: 768px) {
+  .race-controls {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+  }
+}
 </style>

@@ -74,4 +74,45 @@ const reversedResults = computed(() => [...props.results].reverse())
   text-align: center;
   color: var(--color-text-muted);
 }
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Mobile Snap Scroll Carousel */
+@media (max-width: 768px) {
+  /* Header optimization */
+  .panel-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .panel-header h3 {
+    font-size: 16px;
+  }
+  
+  .panel-content {
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .results-list {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    padding: 12px;
+    scroll-snap-type: x mandatory;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  
+  .results-list > * {
+    scroll-snap-align: start;
+    flex: 0 0 280px;
+    width: 280px;
+  }
+}
 </style>

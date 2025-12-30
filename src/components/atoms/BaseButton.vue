@@ -65,4 +65,11 @@ defineEmits<{
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+@media (max-width: 768px) {
+  .base-button {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 14px;
+  }
+}
 </style>

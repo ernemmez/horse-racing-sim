@@ -20,6 +20,7 @@
           <div 
             class="round-header-row" 
             @click="toggleRound(round.roundNo)"
+            @touchend="showMobileTooltip($event, round.roundNo)"
             data-testid="round-header"
           >
             <div class="round-number" data-testid="round-number">R{{ round.roundNo }}</div>
@@ -45,6 +46,37 @@
       </div>
     </div>
   </div>
+
+  <Teleport to="body">
+    <div 
+      v-if="activeTooltipRound !== null" 
+      class="bottom-sheet-overlay"
+      @click="hideTooltip"
+      @touchend="hideTooltip"
+    >
+      <div 
+        class="bottom-sheet" 
+        @click.stop
+        @touchend.stop
+      >
+        <div class="bottom-sheet-handle"></div>
+        <div class="bottom-sheet-header">
+          <strong>Round {{ activeTooltipRound }} - Horses</strong>
+          <button class="close-btn" @click="hideTooltip" @touchend="hideTooltip">✕</button>
+        </div>
+        <div class="bottom-sheet-content">
+          <div 
+            v-for="(horse, idx) in getTooltipRound()?.horses" 
+            :key="horse.id" 
+            class="horse-item"
+          >
+            <span class="horse-pos">{{ idx + 1 }}</span>
+            <span class="horse-name">{{ horse.name }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -89,6 +121,28 @@ const isRoundExpanded = (roundNo: number) => {
   
   // Open ONLY if it matches current round index (0-based vs 1-based roundNo)
   return (props.currentRoundIndex + 1) === roundNo
+}
+
+// Mobile bottom sheet state
+const activeTooltipRound = ref<number | null>(null)
+
+const showMobileTooltip = (event: TouchEvent, roundNo: number) => {
+  // Only on mobile
+  if (window.innerWidth > 768) return
+  
+  event.preventDefault()
+  event.stopPropagation()
+  
+  activeTooltipRound.value = roundNo
+}
+
+const hideTooltip = () => {
+  activeTooltipRound.value = null
+}
+
+const getTooltipRound = () => {
+  if (activeTooltipRound.value === null) return null
+  return props.rounds.find(r => r.roundNo === activeTooltipRound.value)
 }
 </script>
 
@@ -251,5 +305,204 @@ const isRoundExpanded = (roundNo: number) => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Mobile Snap Scroll Carousel */
+@media (max-width: 768px) {
+  /* Header optimization */
+  .table-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .table-header h3 {
+    font-size: 16px;
+  }
+  
+  .table-content {
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .rounds-list {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    padding: 12px 12px 0;
+    scroll-snap-type: x mandatory;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  
+  .round-block {
+    scroll-snap-align: start;
+    flex: 0 0 140px;
+    width: 140px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .round-header-row {
+    padding: 12px 10px;
+    flex-direction: column;
+    gap: 8px;
+    cursor: default;
+    pointer-events: none;
+  }
+  
+  .toggle-icon {
+    display: none;
+  }
+  
+  .round-number {
+    width: 40px;
+    height: 40px;
+    font-size: var(--font-size-md);
+  }
+  
+  .round-info {
+    text-align: center;
+    width: 100%;
+  }
+  
+  .round-distance {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: 4px;
+  }
+  
+  .round-horses {
+    font-size: 10px;
+  }
+  
+  /* Hide horses table on mobile */
+  .horses-table {
+    display: none !important;
+  }
+  
+  .round-header-row {
+    cursor: pointer;
+    pointer-events: auto;
+  }
+}
+
+/* Mobile Bottom Sheet */
+.bottom-sheet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  max-height: 70vh;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease;
+}
+
+.bottom-sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  margin: 12px auto 8px;
+}
+
+.bottom-sheet-header {
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bottom-sheet-header strong {
+  font-size: 16px;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close-btn:active {
+  background: rgba(0,0,0,0.05);
+}
+
+.bottom-sheet-content {
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px 12px 20px;
+}
+
+.horse-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  background: white;
+}
+
+.horse-item:active {
+  background: rgba(0,0,0,0.03);
+}
+
+.horse-pos {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-border);
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.horse-name {
+  flex: 1;
+  color: var(--color-text);
+  font-weight: 500;
 }
 </style>

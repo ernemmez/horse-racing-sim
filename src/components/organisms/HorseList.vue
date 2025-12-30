@@ -24,8 +24,8 @@
           </thead>
           <tbody>
             <tr v-for="horse in horses" :key="horse.id" data-testid="horse-row">
-              <td class="col-name" data-testid="horse-name">{{ horse.name }}</td>
-              <td class="col-condition">
+              <td class="col-name" data-label="Name" data-testid="horse-name">{{ horse.name }}</td>
+              <td class="col-condition" data-label="Condition / Stamina">
                 <div class="condition-wrapper">
                   <span :class="getConditionClass(horse.condition)" data-testid="horse-condition">
                     {{ Math.floor(horse.condition) }}
@@ -41,7 +41,7 @@
                   </div>
                 </div>
               </td>
-              <td class="col-color">
+              <td class="col-color" data-label="Color">
                 <div class="color-box" :style="{ backgroundColor: horse.color }" data-testid="horse-color"></div>
               </td>
             </tr>
@@ -235,6 +235,128 @@ const hideTooltip = () => {
 .text-success { color: var(--color-success); }
 .text-warning { color: #F59E0B; }
 .text-danger { color: var(--color-danger); }
+
+/* Mobile Snap Scroll Carousel */
+@media (max-width: 768px) {
+  .list-content {
+    padding: 0;
+  }
+  
+  .horse-table-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    padding: 12px;
+  }
+  
+  .horse-table {
+    display: flex;
+    gap: 12px;
+    scroll-snap-type: x mandatory;
+    width: max-content;
+  }
+  
+  .horse-table thead {
+    display: none;
+  }
+  
+  .horse-table tbody {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .horse-table tr {
+    scroll-snap-align: start;
+    flex: 0 0 120px;
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 12px 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .horse-table tr:active {
+    transform: scale(0.95);
+  }
+  
+  .horse-table td {
+    border: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .horse-table td::before {
+    display: none;
+  }
+  
+  /* Horse name */
+  .col-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  /* Condition */
+  .col-condition {
+    margin: 8px 0;
+    width: 100%;
+  }
+  
+  .condition-wrapper {
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+  }
+  
+  .condition-wrapper > span {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  
+  .stamina-pill {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 12px;
+  }
+  
+  /* Color */
+  .col-color {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 4px;
+  }
+  
+  .color-box {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+  }
+  
+  /* Header optimization */
+  .list-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .list-header h3 {
+    font-size: 16px;
+  }
+}
 
 .empty-state {
   padding: var(--spacing-xl);

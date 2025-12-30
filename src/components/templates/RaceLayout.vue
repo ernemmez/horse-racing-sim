@@ -116,7 +116,18 @@ const handlePause = () => emit('pause')
 .grid-program,
 .grid-results {
   min-height: 400px;
-  max-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure contents fill the grid area */
+.grid-horses > *,
+.grid-track > *,
+.grid-program > *,
+.grid-results > * {
+  height: 100%;
+  width: 100%;
 }
 
 /* Responsive */
@@ -149,14 +160,22 @@ const handlePause = () => emit('pause')
 
 @media (max-width: 768px) {
   .race-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: auto; /* Allow grid to grow vertically */
+    height: auto;
   }
   
   .grid-horses,
   .grid-track,
   .grid-program,
   .grid-results {
-    grid-column: 1;
+    width: 100%;
+    height: auto;
+    min-height: fit-content;
   }
 }
 </style>

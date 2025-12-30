@@ -9,6 +9,7 @@ describe("RaceControls.vue", () => {
     canStart: false,
     isRaceActive: false,
     isProgramFinished: false,
+    isPaused: false,
   };
 
   // Register BaseButton stub or use real component component if simple

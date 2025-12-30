@@ -32,5 +32,7 @@ exports[`ProgramTable.vue > should match snapshot structure 1`] = `
       </div>
     </div>
   </div>
-</div>"
+</div>
+<!--teleport start-->
+<!--teleport end-->"
 `;

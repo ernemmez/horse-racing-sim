@@ -21,8 +21,7 @@ describe("Program Module", () => {
     it("generateProgram should create 6 rounds with 10 horses each", () => {
       const commit = vi.fn();
 
-      // @ts-ignore
-      programModule.actions.generateProgram({ commit, rootState });
+      programModule.actions.generateProgram({ commit, rootState } as any);
 
       expect(commit).toHaveBeenCalledWith("SET_ROUNDS", expect.any(Array));
       expect(commit).toHaveBeenCalledWith("SET_CURRENT_ROUND", 0);
@@ -58,8 +57,7 @@ describe("Program Module", () => {
       s.rounds = Array(6).fill({}) as any;
       s.currentRoundIndex = 5; // Last round
 
-      // @ts-ignore
-      programModule.actions.nextRound({ commit, state: s, dispatch });
+      programModule.actions.nextRound({ commit, state: s, dispatch } as any);
 
       expect(commit).toHaveBeenCalledWith("SET_CURRENT_ROUND", null);
     });

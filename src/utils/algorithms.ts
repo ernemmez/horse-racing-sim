@@ -1,59 +1,4 @@
-export const HORSE_COLORS = [
-  "#FF6B6B",
-  "#4ECDC4",
-  "#45B7D1",
-  "#FFA07A",
-  "#98D8C8",
-  "#F7DC6F",
-  "#BB8FCE",
-  "#85C1E2",
-  "#F8B739",
-  "#52B788",
-  "#E63946",
-  "#A8DADC",
-  "#457B9D",
-  "#FF8FA3",
-  "#6C5CE7",
-  "#FDCB6E",
-  "#00B894",
-  "#FD79A8",
-  "#74B9FF",
-  "#A29BFE",
-  "#55EFC4",
-  "#81ECEC",
-  "#FAB1A0",
-  "#FF7675",
-  "#00CEC9",
-  "#0984E3",
-  "#D63031",
-  "#636E72",
-  "#2D3436",
-  "#B2BEC3",
-];
-
-const HORSE_NAMES = [
-  "Sergen",
-  "Düldül",
-  "Bold Pilot",
-  "Ribella",
-  "Turbo",
-  "Karayel",
-  "Yavuzhan",
-  "Kafkaslı",
-  "Grand Ekinoks",
-  "Trapper",
-  "Ayabakan",
-  "Johnny Guitar",
-  "Odin",
-  "Caş",
-  "Long Runner",
-  "Burgas",
-  "Call To Victory",
-  "Trakya Ateşi",
-  "Şampiyon",
-  "Devir",
-];
-export const ROUND_DISTANCES = [1200, 1400, 1600, 1800, 2000, 2200];
+import { HORSE_COLORS, HORSE_NAMES } from "./constants";
 
 export function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -65,15 +10,11 @@ export function shuffleArray<T>(array: T[]): T[] {
 }
 
 export function getUniqueColors(count: number): string[] {
-  return shuffleArray(HORSE_COLORS).slice(0, count);
+  return shuffleArray([...HORSE_COLORS]).slice(0, count);
 }
 
 export function getUniqueNames(count: number): string[] {
-  return shuffleArray(HORSE_NAMES).slice(0, count);
-}
-
-export function generateCondition(): number {
-  return Math.floor(Math.random() * 100) + 1;
+  return shuffleArray([...HORSE_NAMES]).slice(0, count);
 }
 
 export function calculateHorseSpeed(

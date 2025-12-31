@@ -1,6 +1,10 @@
 import type { Horse, Round, ProgramState } from "../types";
-import { ROUND_DISTANCES, shuffleArray } from "../../utils/algorithms";
-import { RACE_CONSTANTS, ROUND_CONFIG } from "../../utils/constants";
+import { shuffleArray } from "../../utils/algorithms";
+import {
+  RACE_CONSTANTS,
+  ROUND_CONFIG,
+  ROUND_DISTANCES,
+} from "../../utils/constants";
 
 const programModule = {
   namespaced: true,
